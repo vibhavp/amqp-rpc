@@ -62,7 +62,7 @@ func main() {
 
 ## Client
 
-```
+```go
 package client
 
 import (
