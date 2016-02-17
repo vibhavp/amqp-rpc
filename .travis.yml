@@ -1,0 +1,6 @@
+language: go
+go:
+  - tip
+services:
+  - rabbitmq
+script: go test -bench=. -benchmem 
