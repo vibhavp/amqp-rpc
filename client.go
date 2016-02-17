@@ -71,16 +71,15 @@ func (client *clientCodec) ReadResponseBody(v interface{}) error {
 	return err
 }
 
-func (c *clientCodec) Close() error {
-	return c.conn.Close()
+func (client *clientCodec) Close() error {
+	return client.conn.Close()
 }
 
-func NewClientCodec(url, serverQueue string, encodingCodec EncodingCodec) (rpc.ClientCodec, error) {
-	conn, err := amqp.Dial(url)
-	if err != nil {
-		return nil, err
-	}
-
+//NewClientCodec returns a new rpc.ClientCodec using AMQP on conn. serverRouting is the routing
+//key with with RPC calls are sent, it should be the same routing key used with NewServerCodec.
+//encodingCodec is an EncodingCoding implementation. This package provdes JSONCodec and GobCodec
+//for the JSON and Gob encodings respectively.
+func NewClientCodec(conn *amqp.Connection, serverRouting string, encodingCodec EncodingCodec) (rpc.ClientCodec, error) {
 	channel, err := conn.Channel()
 	if err != nil {
 		return nil, err
@@ -101,7 +100,7 @@ func NewClientCodec(url, serverQueue string, encodingCodec EncodingCodec) (rpc.C
 			message: message,
 		},
 
-		serverRouting: serverQueue,
+		serverRouting: serverRouting,
 	}
 
 	return client, err

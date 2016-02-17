@@ -76,18 +76,15 @@ func (server *serverCodec) Close() error {
 	return server.Close()
 }
 
-func NewServerCodec(url, serverQueue string, encodingCodec EncodingCodec) (rpc.ServerCodec, error) {
-	conn, err := amqp.Dial(url)
-	if err != nil {
-		return nil, err
-	}
-
+//NewServerCodec returns a new rpc.ClientCodec using AMQP on conn. serverRouting is the routing
+//key with with RPC calls are received, encodingCodec is an EncodingCoding implementation. This package provdes JSONCodec and GobCodec for the JSON and Gob encodings respectively.
+func NewServerCodec(conn *amqp.Connection, serverRouting string, encodingCodec EncodingCodec) (rpc.ServerCodec, error) {
 	channel, err := conn.Channel()
 	if err != nil {
 		return nil, err
 	}
 
-	queue, err := channel.QueueDeclare(serverQueue, false, true, false, false, nil)
+	queue, err := channel.QueueDeclare(serverRouting, false, true, false, false, nil)
 	if err != nil {
 		return nil, err
 	}
