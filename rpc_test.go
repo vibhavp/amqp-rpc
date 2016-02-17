@@ -1,18 +1,13 @@
 package amqprpc
 
 import (
-	_ "expvar"
 	"flag"
 	"log"
 	"math/rand"
-	"net/http"
-	_ "net/http/pprof"
 	"net/rpc"
 	"sync"
 	"testing"
 	"time"
-
-	_ "github.com/rakyll/gom/http"
 )
 
 var (
@@ -40,7 +35,6 @@ type Args struct {
 }
 
 func BenchmarkRPC(b *testing.B) {
-	go http.ListenAndServe(":6060", nil)
 	serverCodec, err := NewServerCodec(*url, *queue, JSONCodec{})
 	if err != nil {
 		b.Fatal(err)
