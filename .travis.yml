@@ -3,4 +3,4 @@ go:
   - tip
 services:
   - rabbitmq
-script: go test -bench=. -benchmem 
+script: go test -v -race
