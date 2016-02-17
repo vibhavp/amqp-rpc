@@ -34,7 +34,7 @@ type Args struct {
 	A, B int
 }
 
-func BenchmarkRPC(b *testing.B) {
+func TestRPC(b *testing.T) {
 	serverCodec, err := NewServerCodec(*url, *queue, JSONCodec{})
 	if err != nil {
 		b.Fatal(err)
@@ -54,9 +54,9 @@ func BenchmarkRPC(b *testing.B) {
 	wait := new(sync.WaitGroup)
 	mu := new(sync.Mutex)
 
-	wait.Add(b.N)
+	wait.Add(100)
 
-	for i := 0; i < b.N; i++ {
+	for i := 0; i < 100; i++ {
 		go func() {
 			codec, err := NewClientCodec(*url, *queue, JSONCodec{})
 			if err != nil {
@@ -72,10 +72,9 @@ func BenchmarkRPC(b *testing.B) {
 	}
 
 	wait.Wait()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
-		wait.Add(b.N)
+	for i := 0; i < 100; i++ {
+		wait.Add(100)
 		go func() {
 			for _, client := range clients {
 				go doCall(b, client, wait)
@@ -86,7 +85,7 @@ func BenchmarkRPC(b *testing.B) {
 	wait.Wait()
 }
 
-func doCall(b *testing.B, client *rpc.Client, wait *sync.WaitGroup) {
+func doCall(b *testing.T, client *rpc.Client, wait *sync.WaitGroup) {
 	num1, num2 := rand.Intn(10000000), rand.Intn(10000000)
 
 	reply := new(int)
