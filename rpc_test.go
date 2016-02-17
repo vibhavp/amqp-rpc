@@ -54,9 +54,9 @@ func TestRPC(b *testing.T) {
 	wait := new(sync.WaitGroup)
 	mu := new(sync.Mutex)
 
-	wait.Add(100)
+	wait.Add(10)
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 10; i++ {
 		go func() {
 			codec, err := NewClientCodec(*url, *queue, JSONCodec{})
 			if err != nil {
@@ -73,8 +73,8 @@ func TestRPC(b *testing.T) {
 
 	wait.Wait()
 
-	for i := 0; i < 100; i++ {
-		wait.Add(100)
+	for i := 0; i < 10; i++ {
+		wait.Add(10)
 		go func() {
 			for _, client := range clients {
 				go doCall(b, client, wait)
