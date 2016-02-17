@@ -61,11 +61,14 @@ func (server *serverCodec) WriteResponse(resp *rpc.Response, v interface{}) erro
 	}
 
 	publishing := amqp.Publishing{
-		Headers:       amqp.Table{"error": resp.Error},
 		ReplyTo:       resp.ServiceMethod,
 		MessageId:     route.messageID,
 		CorrelationId: route.routing,
 		Body:          body,
+	}
+
+	if resp.Error != "" {
+		publishing.Headers = amqp.Table{"error": resp.Error}
 	}
 
 	return server.channel.Publish(
