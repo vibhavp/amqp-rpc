@@ -8,6 +8,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/streadway/amqp"
 )
 
 var (
@@ -35,7 +37,12 @@ type Args struct {
 }
 
 func TestRPC(b *testing.T) {
-	serverCodec, err := NewServerCodec(*url, *queue, JSONCodec{})
+	conn, err := amqp.Dial(*url)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	serverCodec, err := NewServerCodec(conn, *queue, JSONCodec{})
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -58,7 +65,12 @@ func TestRPC(b *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		go func() {
-			codec, err := NewClientCodec(*url, *queue, JSONCodec{})
+			conn, err := amqp.Dial(*url)
+			if err != nil {
+				b.Fatal(err)
+			}
+
+			codec, err := NewClientCodec(conn, *queue, JSONCodec{})
 			if err != nil {
 				b.Fatal(err)
 			}
