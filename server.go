@@ -40,6 +40,10 @@ func (server *serverCodec) ReadRequestHeader(r *rpc.Request) error {
 }
 
 func (server *serverCodec) ReadRequestBody(v interface{}) error {
+	if v == nil {
+		return nil
+	}
+
 	return server.codec.codec.Unmarshal(server.curDelivery.Body, v)
 }
 

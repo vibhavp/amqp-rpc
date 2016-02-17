@@ -67,8 +67,11 @@ func (client *clientCodec) ReadResponseHeader(r *rpc.Response) error {
 }
 
 func (client *clientCodec) ReadResponseBody(v interface{}) error {
-	err := client.codec.codec.Unmarshal(client.curDelivery.Body, v)
-	return err
+	if v == nil {
+		return nil
+	}
+
+	return client.codec.codec.Unmarshal(client.curDelivery.Body, v)
 }
 
 func (client *clientCodec) Close() error {
