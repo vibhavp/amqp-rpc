@@ -95,7 +95,8 @@ func NewClientCodec(conn *amqp.Connection, serverRouting string, encodingCodec E
 		return nil, err
 	}
 
-	if queue.Consumers == 0 {
+	serverQueue, _ := channel.QueueDeclare(serverRouting, false, true, false, false, nil)
+	if serverQueue.Consumers == 0 {
 		return nil, ErrNoConsumers
 	}
 
