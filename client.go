@@ -78,6 +78,8 @@ func (client *clientCodec) Close() error {
 	return client.conn.Close()
 }
 
+var ErrNoConsumers = errors.New("amqprpc: No consumers in queue")
+
 //NewClientCodec returns a new rpc.ClientCodec using AMQP on conn. serverRouting is the routing
 //key with with RPC calls are sent, it should be the same routing key used with NewServerCodec.
 //encodingCodec is an EncodingCoding implementation. This package provdes JSONCodec and GobCodec
@@ -91,6 +93,10 @@ func NewClientCodec(conn *amqp.Connection, serverRouting string, encodingCodec E
 	queue, err := channel.QueueDeclare("", false, true, false, false, nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if queue.Consumers == 0 {
+		return nil, ErrNoConsumers
 	}
 
 	message, err := channel.Consume(queue.Name, "", true, false, false, false, nil)
