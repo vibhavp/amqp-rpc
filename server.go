@@ -80,7 +80,7 @@ func (server *serverCodec) WriteResponse(resp *rpc.Response, v interface{}) erro
 	)
 }
 func (server *serverCodec) Close() error {
-	return server.Close()
+	return server.conn.Close()
 }
 
 //NewServerCodec returns a new rpc.ClientCodec using AMQP on conn. serverRouting is the routing
