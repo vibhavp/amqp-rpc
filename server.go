@@ -96,7 +96,7 @@ func NewServerCodec(conn *amqp.Connection, serverRouting string, encodingCodec E
 		return nil, err
 	}
 
-	messages, err := channel.Consume(queue.Name, "", false, false, false, false, nil)
+	messages, err := channel.Consume(queue.Name, "", true, false, false, false, nil)
 	if err != nil {
 		return nil, err
 	}
